@@ -7,6 +7,7 @@ class Quantizer:
     def __init__(self, k, bucket_size):
         self.k = k
         self.bucket_size = bucket_size
+        self.variance = 0
 
     def quantize_bucket(self, a):
         raise NotImplementedError
@@ -117,6 +118,8 @@ class SmartQuantizer(Quantizer):
         return points
 
     def quantize_bucket(self, a):
+        min_a = min(a)
+        max_a = max(a)
         points = self.quantization_points(a, self.k)
 
         # variance1 = 0
@@ -147,6 +150,12 @@ class SmartQuantizer(Quantizer):
             if pos == len(points):
                 pos -= 1
             fraction = random.random()
+            if a[i] > points[pos]:
+                self.variance += (a[i] - points[pos]) * (max_a - a[i])
+            elif a[i] < points[pos - 1]:
+                self.variance += (a[i] - min_a) * (points[pos - 1] - a[i])
+            else:
+                self.variance += (max(a[i], points[pos - 1]) - points[pos - 1]) * (points[pos] - min(a[i], points[pos]))
             if (a[i] - points[pos - 1]) < fraction * (points[pos] - points[pos - 1]):
                 res[i] = points[pos]
             else:
@@ -171,6 +180,13 @@ class StandardQuantizer(Quantizer):
             else:
                 v = math.floor((a[i] - fmin) / unit + random.random())
                 q = fmin + v * unit
+                if q > a[i]:
+                    l = q - unit
+                    r = q
+                else:
+                    l = q
+                    r = q + unit
+                self.variance += (a[i] - l) * (r - a[i])
             res[i] = q
         return res
 
@@ -283,8 +299,15 @@ class ExponentialQuantizer(Quantizer):
             now = min(max_pow, max(min_pow, logs[i]))
             l = math.pow(2, int(now) - 1)
             r = math.pow(2, int(now))
-            a[i] = min(r, max(a[i], l))
 
+            if a[i] < l:
+                self.variance += (a[i] - 0) * (l - a[i]) * vnorm * vnorm
+            elif a[i] > r:
+                self.variance += (a[i] - r) * (1 - a[i]) * vnorm * vnorm
+            else:
+                self.variance += (max(a[i], l) - l) * (min(a[i], r) - a[i]) * vnorm * vnorm
+
+            a[i] = min(r, max(a[i], l))
             if (a[i] - l) / (r - l) < random.random():
                 a[i] = l
             else:
