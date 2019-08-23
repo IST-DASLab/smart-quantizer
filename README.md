@@ -40,7 +40,7 @@ with decaying learning rate, using three quantization algorithms: standard, smar
 |               |standard | exponential| smart 1% | smart 5% | smart 15% |
 |---------------|---------|------------|----------|----------|-----------|
 |test accuracy  |  90.8%  | 92.2%      |91.4%     |    ~     |    ~      |
-|time per epoch | ~130s   | ~330s      | ~350s    |    ~     |    ~      |
+|time per epoch | ~130s   | ~330s      | ~350s    |  ~1225s  |    ~      |
 |avg. variance  | 1.044   |  0.049     |  0.102   |  0.041   |   0.027   |
 
 Variance of the quantization is considered as follows. We find `level` target points. Then for any `x` from the bucket
