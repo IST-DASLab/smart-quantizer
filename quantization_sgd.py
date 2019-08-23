@@ -1,3 +1,4 @@
+import sys
 import torch
 from torch.optim import Optimizer
 from torch.optim.optimizer import required
@@ -79,6 +80,7 @@ class QuantizedSGD(Optimizer):
             raise RuntimeError("There is no such quantizer %s" % quantizer)
         if nesterov and (momentum <= 0 or dampening != 0):
             raise ValueError("Nesterov momentum requires a momentum and zero dampening")
+        self.variance_it = 0
         super(QuantizedSGD, self).__init__(params, defaults)
 
     def __setstate__(self, state):
@@ -109,7 +111,12 @@ class QuantizedSGD(Optimizer):
                 else:
                     whole_grad_list = torch.cat((whole_grad_list, flatten), 0)
 
+        self.quantizer.variance = 0
         whole_grad_list = self.quantizer.quantize(whole_grad_list.tolist())
+        print("Variance", self.variance_it, self.quantizer.variance)
+        self.variance_it += 1
+        if self.variance_it == 200:
+            sys.exit()
 
         id = 0
         for group in self.param_groups:
@@ -122,15 +129,15 @@ class QuantizedSGD(Optimizer):
                 if p.grad is None:
                     continue
                 d_p = p.grad.data
-                old_shape = d_p.shape
+                # old_shape = d_p.shape
                 # print(d_p)
-                reshaped_d_p = d_p.view(-1).tolist()
+                # reshaped_d_p = d_p.view(-1).tolist()
                 #d_p = torch.FloatTensor(self.quantizer.quantize(reshaped_d_p))
-                d_p = torch.FloatTensor(whole_grad_list[id:id + len(reshaped_d_p)])
-                d_p.resize_(old_shape)
-                d_p = d_p.to(p.grad.get_device())
+                # d_p = torch.FloatTensor(whole_grad_list[id:id + len(reshaped_d_p)])
+                # d_p.resize_(old_shape)
+                # d_p = d_p.to(p.grad.get_device())
 
-                id += len(reshaped_d_p)
+                # id += len(reshaped_d_p)
 
                 if weight_decay != 0:
                     d_p.add_(weight_decay, p.data)
