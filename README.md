@@ -37,11 +37,11 @@ Usages with different quantization algorithms:
 The following table contains some information concerning running resnet-20 cifar-10 on the convnet regime, i.e., 200 epochs
 with decaying learning rate, using three quantization algorithms: standard, smart and exponential, with `bucket` size `51200` and `level` 16 both.
 
-|               |standard | exponential| smart 1% | smart 5% | smart 15% |
-|---------------|---------|------------|----------|----------|-----------|
-|test accuracy  |  90.8%  | 92.2%      |91.4%     |    ~     |    ~      |
-|time per epoch | ~130s   | ~330s      | ~350s    |  ~1225s  |    ~      |
-|avg. variance  | 1.044   |  0.049     |  0.102   |  0.041   |   0.027   |
+|               |standard | exponential| smart 1% | smart 5% | smart 15% | smart 25% |
+|---------------|---------|------------|----------|----------|-----------|-----------|
+|test accuracy  |  90.8%  | 92.2%      |91.4%     |    ~     |    ~      |    ~      |
+|time per epoch | ~130s   | ~330s      | ~350s    |  ~1225s  |    ~      |    ~      |
+|avg. variance  | 1.044   |  0.049     |  0.18    |  0.069   |   0.036   |   0.03    |
 
 Variance of the quantization is considered as follows. We find `level` target points. Then for any `x` from the bucket
 we choose the two nearest target points `l` and `r` from below and above, and finally add `(x - l)(r - x)` to the variance.
