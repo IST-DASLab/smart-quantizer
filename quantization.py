@@ -120,6 +120,8 @@ class SmartQuantizer(Quantizer):
         return points
 
     def quantize_bucket(self, a):
+        min_a = min(a)
+        max_a = max(a)
         points = self.quantization_points(a, self.k)
 
         # variance1 = 0
