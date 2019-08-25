@@ -4,11 +4,12 @@ import matplotlib.pyplot as plt
 from statistics import mean
 
 benchmarks = [
-    ('standard', '../logs/variance-standard.txt'),
+#    ('standard', '../logs/variance-standard.txt'),
     ('exponential', '../logs/variance-exponential.txt'),
     ('smart 1%', '../logs/variance-smart-1%.txt'),
     ('smart 5%', '../logs/variance-smart-5%.txt'),
-    ('smart 15%', '../logs/variance-smart-15%.txt')
+    ('smart 15%', '../logs/variance-smart-15%.txt'),
+    ('smart 25%', '../logs/variance-smart-25%.txt')
 ]
 
 def parse_file(filename):
