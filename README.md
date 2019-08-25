@@ -10,7 +10,7 @@ There are four different quantization algorithms available:
 1. None
 2. Standard. Take min and max in the bucket. Take the `level` target points uniformly at random from min-max range.
 Then each value from the bucket is assigned to the nearest target point.
-3. Variance reduction. Choose max(`P`%, 512) candidates from the bucket and then find `level` target points that
+3. Variance reduction. Choose max(`P%1, 512) candidates from the bucket and then find `level` target points that
 reduce the variance (see https://arxiv.org/abs/1611.05402 for more details). Then each value from
 the bucket is assigned to the nearest target point.
 `P=1%` is chosen to amortize the complexity of the target point algorithms which is `O(n level log n)` where n is the number

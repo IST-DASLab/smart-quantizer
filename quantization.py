@@ -149,10 +149,6 @@ class SmartQuantizer(Quantizer):
             if pos == len(points):
                 pos -= 1
             fraction = random.random()
-            if a[i] < points[pos - 1]:
-                print("Fuck!")
-            if a[i] > points[pos]:
-                print("Fuck!")
             if (a[i] - points[pos - 1]) < fraction * (points[pos] - points[pos - 1]):
                 res[i] = points[pos]
             else:
