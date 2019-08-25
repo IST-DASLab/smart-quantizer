@@ -55,7 +55,7 @@ class SmartQuantizer(Quantizer):
                     self.prev[k][i] = j
 
     def sparsify(self, a):
-        choose = int(max(0.05 * len(a), 512))
+        choose = int(max(0.01 * len(a), 512))
         if choose > len(a):
             return a
         if choose > len(a) / 2:
@@ -120,8 +120,6 @@ class SmartQuantizer(Quantizer):
         return points
 
     def quantize_bucket(self, a):
-        min_a = min(a)
-        max_a = max(a)
         points = self.quantization_points(a, self.k)
 
         # variance1 = 0
@@ -152,12 +150,7 @@ class SmartQuantizer(Quantizer):
             if pos == len(points):
                 pos -= 1
             fraction = random.random()
-            if a[i] > points[pos]:
-                self.variance += (a[i] - points[pos]) * (max_a - a[i])
-            elif a[i] < points[pos - 1]:
-                self.variance += (a[i] - min_a) * (points[pos - 1] - a[i])
-            else:
-                self.variance += (max(a[i], points[pos - 1]) - points[pos - 1]) * (points[pos] - min(a[i], points[pos]))
+            self.variance += (a[i] - points[pos - 1]) * (points[pos] - a[i])
             if (a[i] - points[pos - 1]) < fraction * (points[pos] - points[pos - 1]):
                 res[i] = points[pos]
             else:
