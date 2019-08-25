@@ -54,7 +54,7 @@ class SmartQuantizer(Quantizer):
                     self.prev[k][i] = j
 
     def sparsify(self, a):
-        choose = int(max(0.01 * len(a), 512))
+        choose = int(max(0.05 * len(a), 512))
         if choose > len(a):
             return a
         if choose > len(a) / 2:
@@ -86,6 +86,8 @@ class SmartQuantizer(Quantizer):
         self.a = a.copy()
         self.a = self.sparsify(a)
         self.a.sort()
+        self.a[0] = min(a)
+        self.a[len(self.a) - 1] = max(a)
         self.sum = [0]*(len(self.a) + 1)
         self.sumsq = [0]*(len(self.a) + 1)
         for i in range(len(self.sum) - 1):
@@ -147,6 +149,10 @@ class SmartQuantizer(Quantizer):
             if pos == len(points):
                 pos -= 1
             fraction = random.random()
+            if a[i] < points[pos - 1]:
+                print("Fuck!")
+            if a[i] > points[pos]:
+                print("Fuck!")
             if (a[i] - points[pos - 1]) < fraction * (points[pos] - points[pos - 1]):
                 res[i] = points[pos]
             else:
