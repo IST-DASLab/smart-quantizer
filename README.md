@@ -1,4 +1,5 @@
-Here is the code that train the specified model (resnet from convNet or alexnet) in the following manner.
+This is an implementation of various quantization schemes to minimize variance. 
+The code implements a range of different quantizers, and allows to integrate them into a harness which can train a specific set of models using quantized gradients.
 
 In each iteration of the SGD it takes the gradient, applies a quantization to it and only after applies the gradient to the model.
 By that it emulates the quantization process.
